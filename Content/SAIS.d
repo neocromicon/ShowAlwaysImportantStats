@@ -4,7 +4,7 @@ var int PLAYER_MOBSI_PRODUCTION;
 /*
  * Credits to Mud-Freak, 65% of all the code from this patch are from him
  *
- * XP Bar
+ * XP Bar Test
  */
 instance Ninja_ShowAlwaysImportantStats_Bar(Bar) { // Inherit from Bar directly!
     x = Print_Screen[PS_X] / 2;
