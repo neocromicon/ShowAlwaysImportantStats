@@ -375,4 +375,5 @@ func void Ninja_ShowAlwaysImportantStats_Main() {
 
     // Update the text and bar
     Ninja_ShowAlwaysImportantStats_Update(ypos, text, font, yFont, showBar, textHP, textMP);
+	test123;
 };
