@@ -70,8 +70,13 @@ func void Ninja_ShowAlwaysImportantStats_Update(var int yStart, var string text,
 	var oCViewStatusBar bar_hp; bar_hp = MEM_PtrToInst (MEM_GAME.hpBar); //Get Gothic HP-Bar to move viewHP
 	var oCViewStatusBar bar_mp; bar_mp = MEM_PtrToInst (MEM_GAME.manaBar); //Get Gothic Mana-Bar to move viewMP
 	var oCViewStatusBar bar_focus; bar_focus = MEM_PtrToInst (MEM_GAME.focusBar); //Get Gothic Mana-Bar to move viewMP
+
 	var int xHP; xHP = bar_hp.zCView_vposx; var int yHP; yHP = bar_hp.zCView_vposy;
+	var int xSizeHP; xSizeHP = bar_hp.zCView_psizex;
+
 	var int xMP; xMP = bar_mp.zCView_vposx; var int yMP; yMP = bar_mp.zCView_vposy;
+	var int xSizeMP; xSizeMP = bar_mp.zCView_psizex;
+
 	var int yFocus; yFocus = bar_focus.zCView_vposy;
 
 	// Update vertical position of view for stats
@@ -82,8 +87,13 @@ func void Ninja_ShowAlwaysImportantStats_Update(var int yStart, var string text,
 		View_MoveTo(viewHP, 0, yHP-4800-yFont);
 		View_MoveTo(viewMP, 0, yMP-4600-yFont);
 	} else {
-		View_MoveTo(viewHP, xHP, yHP-210-yFont);
-		View_MoveTo(viewMP, xMP, yMP-210-yFont);
+		if (Print_Screen[PS_X] <= 1919) {
+			View_MoveTo(viewHP, xHP+xSizeHP+80, yHP-210-yFont);
+			View_MoveTo(viewMP, xMP+xSizeMP+80, yMP-210-yFont);
+		} else {
+			View_MoveTo(viewHP, xHP+xSizeHP+10, yHP-210-yFont);
+			View_MoveTo(viewMP, xMP+xSizeMP+10, yMP-210-yFont);		
+		};
 		View_MoveTo(viewFocus, 0, yFocus+210+yFont);
 	};
 
