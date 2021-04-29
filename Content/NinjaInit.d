@@ -1,5 +1,5 @@
 // Version des Patches
-const string NINJA_SHOWALWAYSIMPORTANTSTATS_VERSION = "SAIS 2.4.1";
+const string NINJA_SHOWALWAYSIMPORTANTSTATS_VERSION = "SAIS 2.5.0";
 
 func void Ninja_ShowAlwaysImportantStats_Menu(var int menuPtr) {
     MEM_InitAll();
@@ -39,6 +39,9 @@ func void Ninja_ShowAlwaysImportantStats_Menu(var int menuPtr) {
 
 		if (!MEM_GothOptExists("NINJA_SHOWALWAYSIMPORTANTSTATS", "HpMp"))
 		{ MEM_SetGothOpt("NINJA_SHOWALWAYSIMPORTANTSTATS", "HpMp", "0"); };
+
+        if (!MEM_GothOptExists("NINJA_SHOWALWAYSIMPORTANTSTATS", "HpEnemy"))
+		{ MEM_SetGothOpt("NINJA_SHOWALWAYSIMPORTANTSTATS", "HpEnemy", "0"); };
 		
 		if (!MEM_GothOptExists("NINJA_SHOWALWAYSIMPORTANTSTATS", "LoA_Bugs"))
 		{ MEM_SetGothOpt("NINJA_SHOWALWAYSIMPORTANTSTATS", "LoA_Bugs", "0"); };

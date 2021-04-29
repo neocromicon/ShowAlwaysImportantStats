@@ -23,70 +23,90 @@ instance Ninja_ShowAlwaysImportantStats_Bar(Bar) { // Inherit from Bar directly!
 /*
  * Draw/update text and bar on screen
  */
-func void Ninja_ShowAlwaysImportantStats_Update(var int yStart, var string text, var string font, var int yFont, var int showBar, var string textHP, var string textMP) {
+func void Ninja_ShowAlwaysImportantStats_Update(var int yStart, var string text, var string font, var int yFont, var int showBar, var string textHP, var string textMP, var string textFocus) {
     // Constants to adjust
     const int xMargin = 	10; // Distance to left border
     const int yMargin = 	10; // Distance to upper border
 
     // Ensure parent view exists
-    var int view; var int viewHP; var int viewMP; var int bar;
+    var int view; var int viewHP; var int viewMP; var int viewFocus; var int bar;
 	
+	//Create View for stats (Gold, LP ect)
     if (!Hlp_IsValidHandle(view)) {
 		PM_BindInt(view);
         view = View_Create(0, 0, PS_VMax, PS_VMax);
         FF_ApplyExtData(Ninja_ShowAlwaysImportantStats_HideText, 0, -1, view);
     };
 	
+	//Create View for healthbar text
 	if (!Hlp_IsValidHandle(viewHP)) {
 		PM_BindInt(viewHP);
         viewHP = View_Create(0, 0, PS_VMax, PS_VMax);
         FF_ApplyExtData(Ninja_ShowAlwaysImportantStats_HideText, 0, -1, viewHP);
     };
 	
+	//Create View for manabar text
 	if (!Hlp_IsValidHandle(viewMP)) {
 		PM_BindInt(viewMP);
         viewMP = View_Create(0, 0, PS_VMax, PS_VMax);
         FF_ApplyExtData(Ninja_ShowAlwaysImportantStats_HideText, 0, -1, viewMP);
     };
 
-    // Ensure bar exists
+	//Create View for enemy health bar text
+	if (!Hlp_IsValidHandle(viewFocus)) {
+		PM_BindInt(viewFocus);
+        viewFocus = View_Create(0, 0, PS_VMax, PS_VMax);
+        FF_ApplyExtData(Ninja_ShowAlwaysImportantStats_HideText, 0, -1, viewFocus);
+    };
+
+    // Create View for XP bar
     if (!Hlp_IsValidHandle(bar)) {
 		PM_BindInt(bar);
         bar = Bar_Create(Ninja_ShowAlwaysImportantStats_Bar);
         Bar_Show(bar);
     };
 	
-    // Update vertical position of view
-    View_MoveToPxl(view, xMargin, yMargin+yStart);
-	
-	//Update position of viewHP and viewMP
+	//Get x and y of hpBar, manaBar and focusBar
 	var oCViewStatusBar bar_hp; bar_hp = MEM_PtrToInst (MEM_GAME.hpBar); //Get Gothic HP-Bar to move viewHP
 	var oCViewStatusBar bar_mp; bar_mp = MEM_PtrToInst (MEM_GAME.manaBar); //Get Gothic Mana-Bar to move viewMP
+	var oCViewStatusBar bar_focus; bar_focus = MEM_PtrToInst (MEM_GAME.focusBar); //Get Gothic Mana-Bar to move viewMP
 	var int xHP; xHP = bar_hp.zCView_vposx; var int yHP; yHP = bar_hp.zCView_vposy;
 	var int xMP; xMP = bar_mp.zCView_vposx; var int yMP; yMP = bar_mp.zCView_vposy;
+	var int yFocus; yFocus = bar_focus.zCView_vposy;
 
+	// Update vertical position of view for stats
+    View_MoveToPxl(view, xMargin, yMargin+yStart);
+
+	//Update position of viewHP, viewMP and viewFocus
 	if (PLAYER_MOBSI_PRODUCTION == Ninja_ShowAlwaysImportantStats_MOBSI_PRAYBELIAR) { //Set new HP/MP text high HP/MP then pray to beliar
 		View_MoveTo(viewHP, 0, yHP-4800-yFont);
 		View_MoveTo(viewMP, 0, yMP-4600-yFont);
 	} else {
 		View_MoveTo(viewHP, xHP, yHP-210-yFont);
 		View_MoveTo(viewMP, xMP, yMP-210-yFont);
+		View_MoveTo(viewFocus, 0, yFocus+210+yFont);
 	};
-	
+
     // Update text
     View_DeleteText(view);
 	View_DeleteText(viewHP);
 	View_DeleteText(viewMP);
+	View_DeleteText(viewFocus);
     View_AddText(view, 0, 0, text, font);
 	View_AddText(viewHP, 0, 0, textHP, font);
 	View_AddText(viewMP, 0, 0, textMP, font);
+	View_AddText(viewFocus, 0, 0, textFocus, font);
 	
+	//Center viewHP/MP is player pray to beliar
 	if (PLAYER_MOBSI_PRODUCTION == Ninja_ShowAlwaysImportantStats_MOBSI_PRAYBELIAR) { //Center HP/MP text then pray to beliar
 		ViewPtr_AlignText(getPtr(viewHP), ALIGN_CENTER);
 		ViewPtr_AlignText(getPtr(viewMP), ALIGN_CENTER);
 	};
 
-    // Update or hide bar
+	//Center viewFocus
+	ViewPtr_AlignText(getPtr(viewFocus), ALIGN_CENTER);
+
+    // Update or hide bar	
 	var oCNPC her; her = Hlp_GetNPC(Hero);
     if (showBar && !Hlp_is_oCNpc(her.focus_vob)) {	
 		Bar_Show(bar);
@@ -113,6 +133,7 @@ func void Ninja_ShowAlwaysImportantStats_Main() {
     var string text;    // Text
 	var string textHP;    // Text HP
 	var string textMP;    // Text MP
+	var string textFocus; // Text enemy focus
     var string font;    // Font
 	var int    yFont;
     var int    showBar; // Whether to show the bar or not
@@ -123,11 +144,15 @@ func void Ninja_ShowAlwaysImportantStats_Main() {
 	var int    showQuest; //Whether to show quest's or not
 	var int    showClock; //Whether to show clock or not
 	var int	   showHealthMana; //Whether to show the HP or MP or not
+	var int	   showHealthEnemy; //Whether to show the HP for enemy or not
 	var int	   showBugs; //Whether to show special currency "Bugs" from the Mod Legen Asshun
 	var string tpc; // Questbook list
 	
     // Reset text
     text = "";
+	textHP = "";
+	textMP = "";
+	textFocus = "";
 	
 	// Obtain descriptions once only
     const string lvl = "";
@@ -357,8 +382,6 @@ func void Ninja_ShowAlwaysImportantStats_Main() {
 				textHP = ConcatStrings("HP: ", IntToString(hero.attribute[ATR_HITPOINTS]));
 				textHP = ConcatStrings(textHP, "/");
 				textHP = ConcatStrings(textHP, IntToString(hero.attribute[ATR_HITPOINTS_MAX]));
-			} else {
-				textHP = "";
 			};
 		};
 		if (showHealthMana == 2 || showHealthMana == 3) {
@@ -367,12 +390,19 @@ func void Ninja_ShowAlwaysImportantStats_Main() {
 				textMP = ConcatStrings("MP: ", IntToString(hero.attribute[ATR_MANA]));
 				textMP = ConcatStrings(textMP, "/");
 				textMP = ConcatStrings(textMP, IntToString(hero.attribute[ATR_MANA_MAX]));
-			} else {
-				textMP = "";
 			};
 		};
 	};
 
+	//Text for enemy hp
+	showHealthEnemy = STR_ToInt(MEM_GetGothOpt("NINJA_SHOWALWAYSIMPORTANTSTATS", "HpEnemy"));
+	var C_NPC target; target = _^(her.focus_vob); //Get hero target
+	if (showHealthEnemy && _Bar_PlayerStatus() && Hlp_is_oCNpc(her.focus_vob)) { //Is option on? Is Show the Player bar? Have hero someone in focus?
+		textFocus = ConcatStrings("HP: ", IntToString(target.attribute[ATR_HITPOINTS]));
+		textFocus = ConcatStrings(textFocus, "/");
+		textFocus = ConcatStrings(textFocus, IntToString(target.attribute[ATR_HITPOINTS_MAX]));	
+	};
+
     // Update the text and bar
-    Ninja_ShowAlwaysImportantStats_Update(ypos, textsds, font, yFont, showBar, textHP, textMP);
+    Ninja_ShowAlwaysImportantStats_Update(ypos, text, font, yFont, showBar, textHP, textMP, textFocus);
 };

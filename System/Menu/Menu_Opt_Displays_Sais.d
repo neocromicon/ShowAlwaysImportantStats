@@ -24,8 +24,11 @@ instance Menu_Ninja_ShowAlwaysImportantStats_Opt_Display(C_MENU_DEF)
 	
 	items[9] 	= "MenuItem_Ninja_ShowAlwaysImportantStats_HPMP_Inst";
 	items[10] 	= "MenuItem_Ninja_ShowAlwaysImportantStats_HPMP_Choice";
+
+	items[11] 	= "MenuItem_Ninja_ShowAlwaysImportantStats_HPEnemy_Inst";
+	items[12] 	= "MenuItem_Ninja_ShowAlwaysImportantStats_HPEnemy_Choice";
 	
-	items[11]	= "MenuItem_Ninja_ShowAlwaysImportantStats_Opt_Display_Back";
+	items[13]	= "MenuItem_Ninja_ShowAlwaysImportantStats_Opt_Display_Back";
 	
 	defaultOutGame	= 0;	// PERFORMANCE-SETTINGS
 	defaultInGame	= 0;	// PERFORMANCE-SETTINGS
@@ -328,6 +331,60 @@ instance MenuItem_Ninja_ShowAlwaysImportantStats_HPMP_Choice(C_MENU_ITEM_DEF)
 
 
 /*
+ *--------------Health Enemy--------------
+ *
+ */
+instance MenuItem_Ninja_ShowAlwaysImportantStats_HPEnemy_Inst(C_MENU_ITEM_DEF)
+{
+	if (Ninja_ShowAlwaysImportantStats_Lang == 1) { // DE (Windows 1252)
+        text[0] = "HP NPC"; //Name
+		text[1] = "Zeigt die HP des angeschauten NPC's an";  // Kommentar
+    } else if (Ninja_ShowAlwaysImportantStats_Lang == 2) { // PL (Windows 1250)
+        text[0] = "HP NPC"; //Name
+		text[1] = "Pokazuje HP oglπdanego NPC"; // Kommentar
+    } else if (Ninja_ShowAlwaysImportantStats_Lang == 3) { // RU (Windows 1251)
+        text[0] = "HP NPC"; //Name
+		text[1] = "œÓÍ‡Á˚‚‡ÂÚ HP ÔÓÒÏ‡ÚË‚‡ÂÏÓ„Ó NPC"; // Kommentar
+    } else { // EN
+        text[0] = "HP NPC"; //Name
+		text[1] = "Shows the HP of the viewed NPC"; // Kommentar
+    };
+	// Position und Dimension	
+	posx		=	1000;	posy		=	NINJA_SAIS_MENU_START_Y + NINJA_SAIS_MENU_DY*5;
+	dimx		=	3000;	dimy		=	750;
+	// Aktionen
+	onSelAction[0]	= NINJA_SAIS_SEL_ACTION_UNDEF;
+	// Weitere Eigenschaften
+	flags			= flags | NINJA_SAIS_IT_EFFECTS_NEXT;
+};
+instance MenuItem_Ninja_ShowAlwaysImportantStats_HPEnemy_Choice(C_MENU_ITEM_DEF)
+{
+	backPic		=	NINJA_SAIS_MENU_CHOICE_BACK_PIC;
+	type		=	NINJA_SAIS_MENU_ITEM_CHOICEBOX;
+	if (Ninja_ShowAlwaysImportantStats_Lang == 1) { // DE (Windows 1252)
+        text[0] = "Aus|An"; //Name
+    } else if (Ninja_ShowAlwaysImportantStats_Lang == 2) { // PL (Windows 1250)
+        text[0] = "Wy≥πcz|W≥πcz"; //Name
+    } else if (Ninja_ShowAlwaysImportantStats_Lang == 3) { // RU (Windows 1251)
+        text[0] = "¬˚ÍÎ.|¬ÍÎ."; //Name
+    } else { // EN
+        text[0] = "Off|On"; //Name
+    };
+    fontName    =   NINJA_SAIS_MENU_FONT_DEFAULT;
+	// Position und Dimension	
+	posx		= 5000;					posy		=	NINJA_SAIS_MENU_START_Y + NINJA_SAIS_MENU_DY*5 + NINJA_SAIS_MENU_CHOICE_YPLUS;
+	dimx = NINJA_SAIS_MENU_SLIDER_DX;	dimy 		= 	NINJA_SAIS_MENU_CHOICE_DY;
+	// Aktionen
+    onChgSetOption        = "HpEnemy"; //Gothic.ini
+    onChgSetOptionSection = "NINJA_SHOWALWAYSIMPORTANTSTATS"; //Gothic.ini
+	// Weitere Eigenschaften	
+	flags		= flags & ~NINJA_SAIS_IT_SELECTABLE;
+	flags		= flags  | NINJA_SAIS_IT_TXT_CENTER;
+};
+
+
+
+/*
  *--------------ZUR‹CK--------------
  *
  */
@@ -343,7 +400,7 @@ instance MenuItem_Ninja_ShowAlwaysImportantStats_Opt_Display_Back(C_MENU_ITEM_DE
         text[0] = "Back"; //Name
     };
 	// Position und Dimension
-	posx		=	1000;		posy		=	NINJA_SAIS_MENU_START_Y + NINJA_SAIS_MENU_DY*6;
+	posx		=	1000;		posy		=	NINJA_SAIS_MENU_START_Y + NINJA_SAIS_MENU_DY*7;
 	dimx		=	6192;
 	// Aktionen
 	onSelAction[0]	= 	NINJA_SAIS_SEL_ACTION_BACK;
